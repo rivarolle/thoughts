@@ -26,20 +26,20 @@ services:
       - /dev/video12:/dev/video12 #optional
     restart: unless-stopped
 
-  couchpotato:
-    image: ghcr.io/linuxserver/couchpotato
-    container_name: couchpotato
+  radarr:
+    image: ghcr.io/linuxserver/radarr:arm32v7-version-v0.2.0.1504
+    container_name: radarr
     environment:
       - PUID=1001
       - PGID=1001
       - TZ=America/Edmonton
       - UMASK_SET=022
     volumes:
-      - /media/data/programs/couchpotato/config:/config
+      - /media/data/programs/radarr/config:/config
       - /media/data/downloads:/downloads
       - /media/data/movies:/movies
     ports:
-      - 5050:5050
+      - 7878:7878
     restart: unless-stopped
 
   sabnzbd:
