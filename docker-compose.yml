@@ -9,7 +9,7 @@ services:
       - TZ=America/Edmonton
     volumes:
       - /media/data/programs/jellyfin/config:/config
-      - /media/data/tv:/data/tvshows
+      - /media/tv:/data/tvshows
       - /media/data/movies:/data/movies
       - /opt/vc/lib:/opt/vc/lib #optional
     ports:
@@ -68,7 +68,7 @@ services:
       - UMASK_SET=022 #optional
     volumes:
       - /media/data/programs/sonarr/config:/config
-      - /media/data/tv:/tv
+      - /media/tv:/tv
       - /media/data/downloads:/downloads
     ports:
       - 8989:8989
