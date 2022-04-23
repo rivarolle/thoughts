@@ -1,75 +1,113 @@
 version: '3'
 services:
-  jellyfin:
-    image: ghcr.io/linuxserver/jellyfin:bionic
-    container_name: jellyfin
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Edmonton
-    volumes:
-      - /media/data/programs/jellyfin/config:/config
-      - /media/tv:/data/tvshows
-      - /media/data/movies:/data/movies
-      - /opt/vc/lib:/opt/vc/lib #optional
-    ports:
-      - 8096:8096
-      - 8920:8920 #optional
-      - 7359:7359/udp #optional
-      - 1900:1900/udp #optional
-    devices:
-      - /dev/dri:/dev/dri #optional
-      - /dev/vcsm:/dev/vcsm #optional
-      - /dev/vchiq:/dev/vchiq #optional
-      - /dev/video10:/dev/video10 #optional
-      - /dev/video11:/dev/video11 #optional
-      - /dev/video12:/dev/video12 #optional
-    restart: unless-stopped
+    jellyfin:
+        image: linuxserver/jellyfin
+        container_name: jellyfin
+        environment:
+          - PUID=1000
+          - PGID=0
+          - TZ=America/Edmonton
+        volumes:
+          - /share/data/programs/jellyfin/config:/config
+          - /share/tv:/data/tvshows
+          - /share/movies:/data/movies
+        ports:
+          - 8096:8096
+          - 8920:8920
+        devices:
+          - /dev/dri:/dev/dri #optional
+        privileged: true
+        restart: unless-stopped
+        
+    plex:
+        image: lscr.io/linuxserver/plex
+        container_name: plex
+        environment:
+          - PUID=1000
+          - PGID=0
+          - TZ=America/Edmonton
+          - VERSION=docker
+          - PLEX_CLAIM=claim-izx_s9zw_B83prxzHUuT
+        volumes:
+          - /share/data/programs/plex/config:/config
+          - /share/tv:/tv
+          - /share/movies:/movies
+        devices:
+          - /dev/dri:/dev/dri #optional          
+        ports:
+        - 32400:32400
+        - 1900:1900/udp
+        - 3005:3005
+        - 5353:5353/udp
+        - 8324:8324
+        - 32410:32410/udp
+        - 32412:32412/udp
+        - 32413:32413/udp
+        - 32414:32414/udp
+        - 32469:32469
+        restart: unless-stopped
+        
+    sabnzbd:
+        image: lscr.io/linuxserver/sabnzbd
+        container_name: sabnzbd
+        environment:
+          - PUID=1000
+          - PGID=0
+          - TZ=America/Edmonton
+        volumes:
+          - /share/data/programs/sabnzbd/config:/config
+          - /share/data/downloads:/downloads
+          - /share/data/downloads/incomplete:/incomplete-downloads
+        ports:
+          - 8081:8080
+          - 9090:9090
+        privileged: true
+        restart: unless-stopped
 
-  radarr:
-    image: ghcr.io/linuxserver/radarr:arm32v7-version-v0.2.0.1504
-    container_name: radarr
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Edmonton
-      - UMASK_SET=022
-    volumes:
-      - /media/data/programs/radarr/config:/config
-      - /media/data/downloads:/downloads
-      - /media/data/movies:/movies
-    ports:
-      - 7878:7878
-    restart: unless-stopped
+    radarr:
+        image: lscr.io/linuxserver/radarr
+        container_name: radarr
+        environment:
+          - PUID=1000
+          - PGID=0
+          - TZ=America/Edmonton
+          - UMASK_SET=022
+        volumes:
+          - /share/data/programs/radarr/config:/config
+          - /share/data/downloads:/downloads
+          - /share/movies:/movies
+        ports:
+          - 7878:7878
+        restart: unless-stopped        
 
-  sabnzbd:
-    image: ghcr.io/linuxserver/sabnzbd
-    container_name: sabnzbd
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Edmonton
-    volumes:
-      - /media/data/programs/sabnzbd/config:/config
-      - /media/data/downloads:/downloads
-      - /media/data/downloads/incomplete:/incomplete-downloads
-    ports:
-      - 8080:8080
-      - 9090:9090
-    restart: unless-stopped
-
-  sonarr:
-    image: ghcr.io/linuxserver/sonarr
-    container_name: sonarr
-    environment:
-      - PUID=1001
-      - PGID=1001
-      - TZ=America/Edmonton
-      - UMASK_SET=022 #optional
-    volumes:
-      - /media/data/programs/sonarr/config:/config
-      - /media/tv:/tv
-      - /media/data/downloads:/downloads
-    ports:
-      - 8989:8989
-    restart: unless-stopped
+    sonarr:
+        image: lscr.io/linuxserver/sonarr
+        container_name: sonarr
+        environment:
+          - PUID=1000
+          - PGID=0
+          - TZ=America/Edmonton
+          - UMASK_SET=022 #optional
+        volumes:
+          - /share/data/programs/sonarr/config:/config
+          - /share/tv:/tv
+          - /share/data/downloads:/downloads
+        ports:
+          - 8989:8989
+        restart: unless-stopped
+        
+    bazarr:
+        image: lscr.io/linuxserver/bazarr
+        container_name: bazarr
+        environment:
+          - PUID=1000
+          - PGID=0
+          - TZ=America/Edmonton
+          - UMASK_SET=022 #optional
+        volumes:
+          - /share/data/programs/bazarr/config:/config
+          - /share/movies:/movies #optional
+          - /share/tv:/tv #optional
+        ports:
+          - 6767:6767
+        restart: unless-stopped
